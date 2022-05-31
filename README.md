@@ -1,1 +1,1 @@
-https://www.sigbus.info/compilerbookをただ進めるだけのリポジトリ
+https://www.sigbus.info/compilerbook をただ進めるだけのリポジトリ
