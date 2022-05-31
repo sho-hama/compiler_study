@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  ubuntu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/home/user/compiler_study
+    tty: true
