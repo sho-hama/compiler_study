@@ -2,5 +2,6 @@
 *.o
 tmp*
 a.out
-9cc
+9cc/src/9cc
 .idea/
+example
