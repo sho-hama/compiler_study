@@ -56,15 +56,6 @@ struct Token {
   char *str;      // トークン文字列
 };
 
-// 抽象構文木のノードの種類
-typedef enum {
-  ND_ADD, // +
-  ND_SUB, // -
-  ND_MUL, // *
-  ND_DIV, // /
-  ND_NUM, // 整数
-} NodeKind;
-
 // 現在着目しているトークン
 Token *token;
 
@@ -112,8 +103,16 @@ Token *tokenize() {
 /*
  * ノード処理関連
  */
-
 typedef struct Node Node;
+
+// 抽象構文木のノードの種類
+typedef enum {
+  ND_ADD, // +
+  ND_SUB, // -
+  ND_MUL, // *
+  ND_DIV, // /
+  ND_NUM, // 整数
+} NodeKind;
 
 // 抽象構文木のノードの型
 struct Node {
@@ -126,6 +125,7 @@ struct Node {
 Node *primary();
 Node *mul();
 Node *expr();
+Node *unary();
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   Node *node = calloc(1, sizeof(Node));
@@ -186,13 +186,13 @@ Node *primary() {
 }
 
 Node *mul() {
-  Node *node = primary();
+  Node *node = unary();
 
   for (;;) {
     if (consume('*'))
-      node = new_node(ND_MUL, node, primary());
+      node = new_node(ND_MUL, node, unary());
     else if (consume('/'))
-      node = new_node(ND_DIV, node, primary());
+      node = new_node(ND_DIV, node, unary());
     else
       return node;
   }
@@ -209,6 +209,15 @@ Node *expr() {
     else
       return node;
   }
+}
+
+Node *unary() {
+  if (consume('+'))
+    return unary();
+  if (consume('-'))
+    return new_node(ND_SUB, new_node_num(0), unary());
+  return primary();
+
 }
 
 void gen(Node *node) {
